@@ -82,6 +82,7 @@ cdef class DenseMatrix(object):
         else:
             raise NotImplementedError('not supported mode %s' % mode)
 
+        self.clear()
         ccv_read_impl(<char*><bytes>buf, &self._matrix, type, rows, cols, cols*components)
 
 cdef class ClassifierCascade(object):
