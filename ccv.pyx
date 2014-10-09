@@ -63,11 +63,11 @@ cdef class DenseMatrix(object):
             ccv_matrix_free(self._matrix)
             self._matrix = NULL
 
-    def set_file(self, filename, convert=0):
+    def set_file(self, filename, int convert=0):
         self.clear()
         ccv_read_impl(<char*><bytes>filename, &self._matrix, convert | CCV_IO_ANY_FILE, 0, 0, 0)
 
-    def set_buf(self, buf, mode, rows, cols, convert=0):
+    def set_buf(self, buf, mode, int rows, int cols, int convert=0):
         cdef int type = convert
         cdef int components = 0
         if mode == 'L':
