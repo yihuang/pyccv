@@ -116,7 +116,7 @@ def detect_objects(DenseMatrix matrix, ClassifierCascade cascade, count):
     assert matrix._matrix != NULL, 'not initialized matrix'
     assert cascade._cascade != NULL, 'not initialized cascade'
     cdef ccv_array_t* arr = ccv_bbf_detect_objects(matrix._matrix, &cascade._cascade, count, ccv_bbf_default_params)
-    cdef i=0
+    cdef int i=0
     cdef ccv_comp_t* comp
     result = []
     for i in range(arr.rnum):
