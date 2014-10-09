@@ -20,7 +20,7 @@ ext_modules = [ Extension("ccv", [
 
 setup(
     name = 'ccv',
-    version = '1.0.2',
+    version = '1.0.0',
     packages=['ccv'],
     ext_modules = ext_modules,
     author='huangyi',
