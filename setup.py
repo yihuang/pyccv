@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 from distutils.core import setup
 from distutils.extension import Extension
+from Cython.Build import cythonize
 
 ext_modules = [ Extension("ccv", [
-                    "ccv.c",
+                    "ccv.pyx",
                     "deps/ccv/lib/ccv_bbf.c",
                     "deps/ccv/lib/ccv_cache.c",
                     "deps/ccv/lib/ccv_io.c",
@@ -22,7 +23,7 @@ setup(
     name = 'ccv',
     version = '1.0.0',
     packages=['ccv'],
-    ext_modules = ext_modules,
+    ext_modules = cythonize(ext_modules),
     author='huangyi',
     author_email='yi.codeplayer@gmail.com',
     url = 'https://github.com/yihuang/pyccv',
