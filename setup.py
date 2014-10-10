@@ -21,17 +21,21 @@ c_files = [
 if have_cython:
     ccv_files = ["ccv.pyx"]
     cmdclass = {'build_ext': build_ext}
+    extra_args = {
+        'define_macros': [("HAVE_LIBPNG", 1), ("HAVE_LIBJPEG", 1)],
+        'libraries': ["png", "jpeg"],
+    }
 else:
     ccv_files = ["ccv.c"]
     cmdclass = {}
+    extra_args = {}
 
 ext_modules = [ Extension(
                     "ccv",
                     ccv_files + c_files,
                     include_dirs=["deps/ccv/lib"],
-                    define_macros=[("HAVE_LIBPNG", 1), ("HAVE_LIBJPEG", 1)],
-                    libraries=["png", "jpeg"],
                     extra_compile_args=['-ffast-math', '-fPIC'],
+                    **extra_args
                 )
               ]
 
