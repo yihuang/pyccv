@@ -42,7 +42,6 @@ ext_modules = [ Extension(
 setup(
     name = 'ccv',
     version = '1.0.0',
-    packages=['ccv'],
     ext_modules = ext_modules,
     author='huangyi',
     author_email='yi.codeplayer@gmail.com',
