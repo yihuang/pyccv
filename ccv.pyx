@@ -67,7 +67,7 @@ cdef class DenseMatrix(object):
         self.clear()
         ccv_read_impl(<char*><bytes>filename, &self._matrix, convert | CCV_IO_ANY_FILE, 0, 0, 0)
 
-    def set_buf(self, buf, mode, int rows, int cols, int convert=0):
+    def set_buf(self, char[:] buf, mode, int rows, int cols, int convert=0):
         cdef int type = convert
         cdef int components = 0
         if mode == 'L':
@@ -83,7 +83,7 @@ cdef class DenseMatrix(object):
             raise NotImplementedError('not supported mode %s' % mode)
 
         self.clear()
-        ccv_read_impl(<char*><bytes>buf, &self._matrix, type, rows, cols, cols*components)
+        ccv_read_impl(<char*>buf, &self._matrix, type, rows, cols, cols*components)
 
 cdef class ClassifierCascade(object):
     cdef ccv_bbf_classifier_cascade_t* _cascade
@@ -126,3 +126,53 @@ def detect_objects(DenseMatrix matrix, ClassifierCascade cascade, count):
             comp.classification.confidence,
         ))
     return result
+
+def decodeYUV420SP(_in, int width, int height):
+    cdef int frameSize = width * height
+    cdef int i=0, j=0, yp=0
+    cdef bytearray rgb_ba = bytearray(width*height*sizeof(int))
+    cdef int* rgb = <int*><char*>rgb_ba
+    cdef char[:] yuv420sp = _in[:]
+    #cdef char* yuv420sp = tmp
+
+    cdef int u, v, uvp
+    cdef int y, y1192, r, g, b
+
+    for j in range(height):
+        u = 0
+        v = 0
+        uvp = frameSize + (j >> 1) * width
+        for i in range(width):
+            yp += 1
+            y = (0xff & (<int>yuv420sp[yp])) - 16
+            if y < 0:
+                y = 0
+            if (i & 1) == 0:
+                v = (0xff & yuv420sp[uvp]) - 128
+                uvp += 1
+                u = (0xff & yuv420sp[uvp]) - 128
+                uvp += 1
+
+            y1192 = 1192 * y
+            r = (y1192 + 1634 * v)
+            g = (y1192 - 833 * v - 400 * u)
+            b = (y1192 + 2066 * u)
+
+            if r < 0:
+                r = 0
+            elif r > 262143:
+                r = 262143
+
+            if g < 0:
+                g = 0
+            elif g > 262143:
+                g = 262143
+
+            if b < 0:
+                b = 0
+            elif b > 262143:
+                b = 262143
+
+            rgb[yp] = 0xff000000 | ((r << 6) & 0xff0000) | ((g >> 2) & 0xff00) | ((b >> 10) & 0xff);  
+
+    return rgb_ba
