@@ -65,7 +65,7 @@ cdef class DenseMatrix(object):
 
     def set_file(self, filename, int convert=0):
         self.clear()
-        ccv_read_impl(<char*><bytes>filename, &self._matrix, convert | CCV_IO_ANY_FILE, 0, 0, 0)
+        ccv_read_impl(<char*>filename, &self._matrix, convert | CCV_IO_ANY_FILE, 0, 0, 0)
 
     def set_buf(self, char[:] buf, mode, int rows, int cols, int convert=0):
         cdef int type = convert
@@ -83,7 +83,7 @@ cdef class DenseMatrix(object):
             raise NotImplementedError('not supported mode %s' % mode)
 
         self.clear()
-        ccv_read_impl(<char*>buf, &self._matrix, type, rows, cols, cols*components)
+        ccv_read_impl(&buf[0], &self._matrix, type, rows, cols, cols*components)
 
 cdef class ClassifierCascade(object):
     cdef ccv_bbf_classifier_cascade_t* _cascade
